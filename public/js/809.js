@@ -1,0 +1,1 @@
+(self.webpackChunk=self.webpackChunk||[]).push([[809],{6809:(n,e,s)=>{"use strict";s.r(e),s.d(e,{default:()=>l});const t={};const l=(0,s(1900).Z)(t,(function(){var n=this,e=n.$createElement,s=n._self._c||e;return s("div",[s("b-jumbotron",[n._v("\n        This is DASHBOARD\n    ")])],1)}),[],!1,null,null,null).exports}}]);
