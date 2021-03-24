@@ -64,62 +64,25 @@
                         v-model="currentItem.role_id"
                         :options="roles"/>
                 </b-form-group>
-                <b-form-group label="Branch">
-                    <b-select
-                        required
-                        text-field="branch_name"
-                        value-field="id"
-                        v-model="currentItem.branch_id"
-                        :options="branches"/>
-                </b-form-group>
                 <b-form-group label="Password">
                     <b-input type="password" v-model="currentItem.password"/>
                 </b-form-group>
-                <!--                <b-form-group label="Confirm Password">-->
-                <!--                    <b-input type="password" v-model="currentItem.password_confirmation"/>-->
-                <!--                </b-form-group>-->
                 <b-button type="submit" variant="dark" block>SUBMIT</b-button>
             </b-form>
-<!--            <pre v-html="currentItem"></pre>-->
+            <!--            <pre v-html="currentItem"></pre>-->
         </b-modal>
-        <b-modal lazy id="view_modal"
-                 v-bind="{
-                    bodyClass:'p-2',
-                    headerBgVariant:'dark',
-                    headerTextVariant:'light',
-                    title:'View Details'
-                 }"
-                 @hidden="currentItem=null">
-            <b-table v-if="currentItem"
-                     thead-class="d-none"
-                     bordered
-                     hover
-                     striped
-                     small
-                     head-variant="dark"
-                     :items="o2t(currentItem,['email_verified_at'])">
-                <template #cell(key)="row">
-                    {{ row.item.key|startCase }}
-                </template>
-                <template #cell(value)="row">
-                    <template v-if="['created_at','updated_at'].includes(row.item.key)">
-                        {{ row.item.value|dayjs }}
-                    </template>
-                    <template v-else>
-                        {{ row.item.value }}
-                    </template>
-                </template>
-            </b-table>
-        </b-modal>
+        <view-profile @hidden="currentItem=null" :item="currentItem"/>
     </div>
 </template>
 <script>
 import TheTable from "../../components/TheTable";
 import dt, {o2t} from "../../partials/datatable";
+import ViewProfile from "./View";
 
 export default {
     components: {
-        TheTable
+        TheTable,
+        ViewProfile
     },
     mixins: [dt],
     computed: {
@@ -128,10 +91,7 @@ export default {
         },
         roles() {
             return window.s('roles');
-        },
-        branches() {
-            return window.s('branches');
-        },
+        }
     },
     data() {
         return {

@@ -1,6 +1,10 @@
 <b-collapse id="professional-info" accordion="my-accordion" role="tabpanel">
     <b-collapse id="professioal_info_form" v-model="show_professional_info_form">
-        <form @submit.prevent="handleProfessionalInfo">
+        <form @submit.prevent="genericHandler(
+            '{{route('Frontend.users.professional_info.store')}}',
+            professional_info,
+            function(){cancelProfessionalInfoForm();$refs.professional_info_table.refresh();}
+        )">
             <b-card title="Add Professional Information">
                 <b-form-group label="Job Title">
                     <b-input
@@ -40,7 +44,7 @@
                         </b-form-group>
                     </b-col>
                     <b-col md="6" sm="12">
-                        <b-form-group label="Institution">
+                        <b-form-group label="Ending Date">
                             <b-input
                                 size="sm"
                                 placeholder="Ending Date"
@@ -87,8 +91,9 @@
             bordered
             hover
             striped
+            :api-url="'{{route('Frontend.users.professional_info.index')}}'"
             :fields="[{key:'sl',label:'SL'},'title','position','institution','starting_date','ending_date',{key:'action',thClass:'text-right',tdClass:'text-right'}]"
-            :items="professionalInfoList">
+            :items="getGenericList">
             <template #cell(sl)="row">
                 @{{row.index+1}}
             </template>
@@ -102,14 +107,17 @@
                     </b-button>
                     <b-button variant="warning"
                               @click="()=>{
-                                                      professional_info=JSON.parse(JSON.stringify(row.item));
-                                                      show_professional_info_form=true
-                                                  }"
+                                          professional_info=JSON.parse(JSON.stringify(row.item));
+                                          show_professional_info_form=true
+                                      }"
                               title="Edit">
                         <i class="fa fa-edit"></i>
                     </b-button>
                     <b-button variant="danger"
-                              @click="deleteProfessionalInfo(row.item.id)"
+                              @click="genericTrash(
+                                    '{{route('Frontend.users.professional_info.delete','')}}/' + row.item.id,
+                                    function(){$refs.professional_info_table.refresh();}
+                              )"
                               title="Delete">
                         <i class="fa fa-trash"></i>
                     </b-button>

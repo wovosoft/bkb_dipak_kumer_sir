@@ -1,6 +1,10 @@
 <b-collapse id="academic-info" accordion="my-accordion" role="tabpanel">
     <b-collapse id="add_academic_info" v-model="show_academic_form">
-        <b-form @submit.prevent="handleAcademicInfo">
+        <b-form @submit.prevent="genericHandler(
+            '{{route('Frontend.users.academic_info.store')}}',
+            academic_info,
+            function(){cancelAcademicInfoForm();$refs.academic_info_table.refresh();}
+        )">
             <b-card title="Add Academic Info"
                     footer-class="p-2"
                     class="mb-2">
@@ -97,8 +101,9 @@
             bordered
             hover
             striped
+            :api-url="'{{route("Frontend.users.academic_info.index")}}'"
             :fields="[{key:'sl',label:'SL'},'exam_name','board','institution','passing_year','result',{key:'action',thClass:'text-right',tdClass:'text-right'}]"
-            :items="academicInfoList">
+            :items="getGenericList">
             <template #cell(sl)="row">
                 @{{row.index+1}}
             </template>
@@ -115,14 +120,17 @@
                     </b-button>
                     <b-button variant="warning"
                               @click="()=>{
-                                                      academic_info=JSON.parse(JSON.stringify(row.item));
-                                                      show_academic_form=true
-                                                  }"
+                                          academic_info=JSON.parse(JSON.stringify(row.item));
+                                          show_academic_form=true
+                                      }"
                               title="Edit">
                         <i class="fa fa-edit"></i>
                     </b-button>
                     <b-button variant="danger"
-                              @click="deleteAcademicInfo(row.item.id)"
+                              @click="genericTrash(
+                                  '{{route('Frontend.users.academic_info.delete','')}}/' +row.item.id,
+                                  function(){$refs.academic_info_table.refresh()}
+                              )"
                               title="Delete">
                         <i class="fa fa-trash"></i>
                     </b-button>

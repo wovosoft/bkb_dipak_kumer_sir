@@ -1,6 +1,14 @@
 <b-collapse id="contact-info" visible accordion="my-accordion" role="tabpanel">
     <b-card title="Contact Information">
-        <b-form @submit.prevent="submitContact">
+        <b-form @submit.prevent="function(){
+            genericHandler(
+                '{{route('Frontend.contacts.store')}}', contact,
+                function(){
+                    contact = {content: null, type: 'phone'};
+                    $refs.contact_list.refresh();
+                }
+            )
+        }">
             <b-form-group>
                 <b-input-group size="sm">
                     <template #prepend>
@@ -34,17 +42,29 @@
         </b-form>
         <b-table small hover striped bordered head-variant="dark"
                  ref="contact_list"
+                 :api-url="'{{route('Frontend.contacts.list')}}'"
                  :fields="[{key:'type',sortable:true},{key:'content',sortable: true},{key:'action',thClass:'text-right',tdClass:'text-right'}]"
-                 :items="getContacts">
+                 :items="getGenericList">
+            <template #cell(content)="row">
+                <a :href="(row.item.type==='phone'?'tel:':'mailto:')+row.item.content" target="_blank">
+                    @{{ row.item.content }}
+                </a>
+            </template>
             <template #cell(action)="row">
                 <b-button-group size="sm">
                     <b-button variant="dark"
-                              @click="editContact(row.item)"
+                              @click="()=>{
+                                contact = JSON.parse(JSON.stringify(row.item));
+                                $refs.contact_input.focus();
+                              }"
                               title="Modify Contact">
                         <i class="fa fa-edit"></i>
                     </b-button>
                     <b-button variant="danger"
-                              @click="trashContact(row.item.id)"
+                              @click="genericTrash(
+                                '{{route('Frontend.contacts.trash','')}}/' +row.item.id,
+                                function(){$refs.contact_list.refresh()}
+                              )"
                               title="Delete Contact">
                         <i class="fa fa-trash"></i>
                     </b-button>

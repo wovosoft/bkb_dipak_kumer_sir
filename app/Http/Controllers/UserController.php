@@ -3,15 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Assets\Datatable;
-use App\Models\ContactInfo;
 use App\Models\Division;
 use App\Models\User;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 
@@ -34,8 +31,8 @@ class UserController extends Controller
                 ->select([
                     'id',
                     'name',
+                    'profile_photo',
                     'role_id',
-                    'branch_id',
                     'email',
                     'created_at',
                     'updated_at'
@@ -46,8 +43,15 @@ class UserController extends Controller
                         ->orWhere('email', 'LIKE', "%" . $request->post('filter') . "%");
                 })
                 ->with([
-                    'branch:id,branch_name,branch_code',
-                    'role:id,name'
+                    'role:id,name',
+                    'personalInfo.division',
+                    'personalInfo.district',
+                    'personalInfo.upazila',
+                    'academicInfo',
+                    'contactInfo',
+                    'professionalInfo',
+                    'familyMembers',
+
                 ])
         );
     }
@@ -79,10 +83,9 @@ class UserController extends Controller
                     "min:6"
                 ],
                 "role_id" => "required|numeric",
-                "branch_id" => "required|numeric"
             ]);
             $item = User::query()->findOrNew($request->post('id'));
-            $item->forceFill($request->only(['name', 'email', 'branch_id', 'role_id']));
+            $item->forceFill($request->only(['name', 'email', 'role_id']));
             if ($request->has('password') && $request->post('password')) {
                 $item->password = Hash::make($request->post('password'));
             }

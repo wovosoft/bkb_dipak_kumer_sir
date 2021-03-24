@@ -1,5 +1,5 @@
 *
 !public/
-!files/*
-!files/geo/*
+!../../files/*
+!../../files/*/*
 !.gitignore

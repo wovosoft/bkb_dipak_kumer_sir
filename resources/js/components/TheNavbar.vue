@@ -17,23 +17,6 @@
                             Roles
                         </b-dropdown-item>
                     </b-nav-item-dropdown>
-                    <b-nav-item-dropdown text="Setup" right>
-                        <b-dropdown-item :to="{name:'Branches'}" exact exact-active-class="active">
-                            Branches
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{name:'CrmRmOffices'}" exact exact-active-class="active">
-                            CRM-RM Offices
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{name:'DivisionalOffices'}" exact exact-active-class="active">
-                            Divisional Offices
-                        </b-dropdown-item>
-                        <b-dropdown-item :to="{name:'LoanTypes'}" exact exact-active-class="active">
-                            Loan Types & Documents
-                        </b-dropdown-item>
-                    </b-nav-item-dropdown>
-                    <b-nav-item :to="{name:'LoanDetails'}">
-                        Loan Details
-                    </b-nav-item>
                 </b-navbar-nav>
 
                 <!-- Right aligned nav items -->

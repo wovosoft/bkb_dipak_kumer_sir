@@ -2,42 +2,31 @@
 
 use App\Http\Controllers\{AcademicInfoController,
     AdminController,
-    BranchController,
-    BranchLoanController,
     ContactInfoController,
-    CrmRmOfficeController,
-    DivisionalOfficeController,
-    DocumentTypeController,
-    LoanDetailController,
-    LoanSubTypeController,
-    LoanTypeController,
+    FamilyMemberController,
     PersonalInfoController,
+    PostController,
     ProfessionalInfoController,
     RoleController,
     UserController
 };
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware(['auth'])
     ->name('Frontend.')
     ->group(function () {
-        Route::get('/', function (Request $request) {
-            if ($request->user()->can('is_admin')) {
-                return redirect()->route('Admin.Index');
-            }
-            return redirect('/profile');
-        })->name('Index');
-
+        Route::get('/', [PostController::class, 'index'])->name('Index');
+        Route::get('/posts/{post}/{slug}', [PostController::class, 'show'])->name('Post.Show');
         Route::get('/profile', [UserController::class, 'profile'])->name('Profile');
         Route::post('/profile/photo/upload', [UserController::class, 'photoUpload'])->name('Profile.photoUpload');
-        Route::post('/get_loan_details', [BranchLoanController::class, 'getLoanDetails'])
-            ->name('LoanDetails');
+        Route::post('/family_member/photo/upload', [FamilyMemberController::class, 'photoUpload'])->name('FamilyMember.photoUpload');
+
 
         ContactInfoController::routes();
         PersonalInfoController::routes();
         AcademicInfoController::routes();
         ProfessionalInfoController::routes();
+        FamilyMemberController::routes();
     });
 
 
@@ -52,18 +41,11 @@ Route::prefix('backend')
     ->group(function () {
         UserController::routes();
         RoleController::routes();
-        BranchController::routes();
-        DivisionalOfficeController::routes();
-        CrmRmOfficeController::routes();
-        LoanTypeController::routes();
-        LoanSubTypeController::routes();
-        DocumentTypeController::routes();
     });
 Route::prefix('backend')
     ->name('backend.')
     ->middleware(['auth'])
     ->group(function () {
-        LoanDetailController::routes();
         Route::post('file_upload', [AdminController::class, 'fileUpload'])
             ->name('file_upload');
     });

@@ -43,7 +43,7 @@ class ImportGeo extends Command
     {
         //divisions
         \DB::beginTransaction();
-        $divisions = json_decode(\File::get(storage_path('app/files/geo/divisions/divisions.json')));
+        $divisions = json_decode(\File::get(base_path('files/geo/divisions/divisions.json')));
         foreach ($divisions[2]->data as $division) {
             $div = new Division();
             $div->forceFill([
@@ -55,7 +55,7 @@ class ImportGeo extends Command
         }
 
 
-        $districts = json_decode(\File::get(storage_path('app/files/geo/districts/districts.json')));
+        $districts = json_decode(\File::get(base_path('files/geo/districts/districts.json')));
         foreach ($districts[2]->data as $district) {
             (new District())
                 ->forceFill([
@@ -69,7 +69,7 @@ class ImportGeo extends Command
                 ->saveOrFail();
         }
 
-        $upazilas = json_decode(\File::get(storage_path('app/files/geo/upazilas/upazilas.json')));
+        $upazilas = json_decode(\File::get(base_path('files/geo/upazilas/upazilas.json')));
         foreach ($upazilas[2]->data as $upazila) {
             (new Upazila())
                 ->forceFill([
@@ -80,7 +80,7 @@ class ImportGeo extends Command
                 ])
                 ->saveOrFail();
         }
-        $unions = json_decode(\File::get(storage_path('app/files/geo/unions/unions.json')));
+        $unions = json_decode(\File::get(base_path('files/geo/unions/unions.json')));
         foreach ($unions[2]->data as $union) {
             (new Union())
                 ->forceFill([

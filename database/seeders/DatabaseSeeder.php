@@ -3,6 +3,13 @@
 namespace Database\Seeders;
 
 use App\Assets\Utils;
+use App\Models\AcademicInfo;
+use App\Models\Blog\Comment;
+use App\Models\Blog\Post;
+use App\Models\ContactInfo;
+use App\Models\FamilyMember;
+use App\Models\PersonalInfo;
+use App\Models\ProfessionalInfo;
 use App\Models\Role;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -24,7 +31,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $branch_role = Role::factory()->create([
-            "name" => "Branch",
+            "name" => "User Only",
             "permissions" => Utils::$branchPermissions
         ]);
 
@@ -32,52 +39,65 @@ class DatabaseSeeder extends Seeder
             "name" => "Admin",
             "email" => "admin@gmail.com",
             "password" => Hash::make("admin123456789"),
-            "branch_id" => 1,
             "role_id" => $admin_role->id
         ]);
-        User::factory()->create([
+        $user = User::factory()->create([
             "name" => "User",
             "email" => "user@bkb.com",
             "password" => Hash::make("user123456789"),
-            "branch_id" => 1,
             "role_id" => $branch_role->id
         ]);
-
-        /*
-                LoanType::factory(10)
-                    ->create()
-                    ->each(function($loanType){
-                        LoanSubType::factory(5)->create([
-                            "loan_type_id"=>$loanType->id
-                        ])->each(function($loanSubType) use($loanType){
-                            DocumentType::factory(5)
-                            ->create([
-                                "loan_type_id"=>$loanType->id,
-                                "loan_sub_type_id"=>$loanSubType->id
-                            ]);
-                        });
-                    });
-
-                    DivisionalOffice::factory(random_int(1,20))
-                    ->create()
-                    ->each(function($divisionalOffice){
-                        CrmRmOffice::factory(random_int(1,10))
-                        ->create([
-                            "divisional_office_id"=>$divisionalOffice->id
-                        ])
-                        ->each(function($crmRmOffice) use($divisionalOffice){
-                            Branch::factory(random_int(1,10))
-                            ->create([
-                                "divisional_office_id"=>$divisionalOffice->id,
-                                "crm_rm_office_id"=>$crmRmOffice->id
-                            ]);
-                        });
-                    });
-        */
-        \Artisan::call('initial_bank_data:import');
-//        Artisan::call("generate:fake_loan_types");
-        Artisan::call("initial:loan_setup");
         Artisan::call("import:geo");
+        $this->fakeUserData($user);
+        User::factory()
+            ->count(50)
+            ->create([
+                "role_id" => $branch_role->id
+            ])
+            ->each(function (User $user) {
+                $this->fakeUserData($user);
+                Post::factory()
+                    ->count(random_int(1, 10))
+                    ->create([
+                        "user_id" => $user->id
+                    ])
+                    ->each(function (Post $post) {
+                        Comment::factory()
+                            ->count(random_int(1, 5))
+                            ->create([
+                                "user_id" => $post->user_id,
+                                "post_id" => $post->id
+                            ]);
+                    });
+            });
 
+    }
+
+    private function fakeUserData(User $user)
+    {
+        AcademicInfo::factory()
+            ->count(random_int(1, 5))
+            ->create([
+                "user_id" => $user->id
+            ]);
+        ContactInfo::factory()
+            ->count(random_int(5, 10))
+            ->create([
+                'user_id' => $user->id
+            ]);
+        FamilyMember::factory()
+            ->count(random_int(1, 5))
+            ->create([
+                'related_to' => $user->id
+            ]);
+        PersonalInfo::factory()
+            ->create([
+                'user_id' => $user->id
+            ]);
+        ProfessionalInfo::factory()
+            ->count(random_int(1, 5))
+            ->create([
+                'user_id' => $user->id
+            ]);
     }
 }

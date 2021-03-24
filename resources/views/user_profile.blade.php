@@ -37,15 +37,17 @@
     <b-container class="mt-3">
         <b-form-row>
             <b-col md="4" sm="12">
-                <b-card header-class="text-center bg-transparent" body-class="text-center">
-                    <label style="cursor: pointer;">
-                        <b-img-lazy rounded="circle" thumbnail class="m-auto mt-3"
-                                    @click="openProfileDialog"
-                                    :src="profile_photo_url"></b-img-lazy>
-                        <b-file v-model="profile_file"
-                                @input="processProfilePhoto($event)"
-                                class="d-none" ref="profile_file"></b-file>
-                    </label>
+                <b-card header-class="text-center bg-transparent p-0" body-class="text-center">
+                    <template #header>
+                        <label style="cursor: pointer;">
+                            <b-img-lazy  thumbnail class="m-auto mt-3 border-0"
+                                         fluid-grow
+                                        :src="profile_photo_url"></b-img-lazy>
+                            <b-file v-model="profile_file"
+                                    @input="processProfilePhoto($event)"
+                                    class="d-none" ref="profile_file"></b-file>
+                        </label>
+                    </template>
                     <h4 style="color: CADETBLUE" class="mt-3">
                         {{auth()->user()->name}}
                     </h4>
@@ -75,6 +77,7 @@
                     @include('components.profile.academic-info')
                     @include('components.profile.professional-info')
                     @include('components.profile.family-members')
+
                 </div>
             </b-col>
         </b-form-row>

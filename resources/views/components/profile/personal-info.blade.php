@@ -1,5 +1,5 @@
 <b-collapse id="personal-info" accordion="my-accordion" role="tabpanel">
-    <b-form @submit.prevent="handlePersonalInfo">
+    <b-form @submit.prevent="genericHandler('{{route('Frontend.users.personal_info.store')}}',personal_info)">
         <b-card title="Personal Information">
             <b-form-row>
                 <b-col md="4" sm="12">

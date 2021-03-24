@@ -22,7 +22,20 @@ class PersonalInfoFactory extends Factory
     public function definition()
     {
         return [
-            //
+            "first_name" => $this->faker->title,
+            "mid_name" => $this->faker->firstName,
+            "last_name" => $this->faker->lastName,
+            "date_of_birth" => $this->faker->date('Y-m-d'),
+            "nid" => random_int(1000, 10000),
+            "nationality" => $this->faker->country,
+            "division_id" => random_int(1, 6),
+            "thana" => $this->faker->word,
+            "post_office" => $this->faker->word,
+            "post_code" => $this->faker->postcode,
+            "fathers_name" => $this->faker->firstNameMale,
+            "mothers_name" => $this->faker->firstNameFemale,
+            "spouse_name" => $this->faker->firstNameFemale,
+            "gender" => $this->faker->randomElement(['male', 'female']),
         ];
     }
 }

@@ -21,8 +21,10 @@ class ContactInfoFactory extends Factory
      */
     public function definition()
     {
+        $type = ['email', 'phone'][random_int(0, 1)];
         return [
-            //
+            "type" => $type,
+            "content" => $type === 'email' ? $this->faker->companyEmail : $this->faker->e164PhoneNumber
         ];
     }
 }

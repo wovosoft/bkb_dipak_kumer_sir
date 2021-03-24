@@ -16,4 +16,19 @@ class PersonalInfo extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function division(): BelongsTo
+    {
+        return $this->belongsTo(Division::class);
+    }
+
+    public function district(): BelongsTo
+    {
+        return $this->belongsTo(District::class);
+    }
+
+    public function upazila(): BelongsTo
+    {
+        return $this->belongsTo(Upazila::class);
+    }
 }

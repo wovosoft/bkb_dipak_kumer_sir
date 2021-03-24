@@ -1,6 +1,6 @@
 <template>
     <div>
-        <the-navbar brand="BKB LIMS"></the-navbar>
+        <the-navbar brand="HRM System"></the-navbar>
         <b-container fluid class="mt-4 shadow-sm">
             <router-view></router-view>
         </b-container>

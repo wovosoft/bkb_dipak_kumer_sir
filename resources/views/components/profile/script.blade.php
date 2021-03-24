@@ -33,6 +33,7 @@
             },
             data() {
                 return {
+                    show_family_members_form: false,
                     profile_photo_url: '{{auth()->user()->profile_photo_url}}',
                     profile_file: null,
                     show_academic_form: false,
@@ -40,6 +41,7 @@
                     contact: {},
                     academic_info: {},
                     professional_info: {},
+                    family_members_info: {},
                     personal_info: {!! json_encode($personal_info??[
                         "division_id"=> null,
                         "district_id"=> null,
@@ -90,84 +92,44 @@
                 logout() {
                     document.getElementById('logout_form').submit();
                 },
-                submitContact() {
+                showMessages(promise, successCallback, failedCallback) {
                     let the = this;
-                    axios
-                        .post('{{route('Frontend.contacts.store')}}', JSON.parse(JSON.stringify(the.contact)))
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                            this.$set(this, 'contact', JSON.parse(JSON.stringify(contact)));
-                            this.$refs.contact_list.refresh();
-                        })
-                        .catch(err => {
-                            // console.log(err.response);
-                            the.$bvToast.toast(err.res.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
+                    promise.then(function (res) {
+                        the.$bvToast.toast(res.data.message || 'Successfully Done', {
+                            title: 'SUCCESS',
+                            autoHideDelay: 5000,
+                            appendToast: true,
+                            variant: 'primary'
                         });
-                },
-                handlePersonalInfo() {
-                    let the = this;
-                    axios
-                        .post('{{route('Frontend.users.personal_info.store')}}', JSON.parse(JSON.stringify(the.personal_info)))
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                        })
-                        .catch(err => {
-                            // console.log(err.response);
-                            the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
+                        if (typeof successCallback === "function") {
+                            successCallback(res);
+                        }
+                    }).catch(function (err) {
+                        the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
+                            title: 'FAILED',
+                            autoHideDelay: 5000,
+                            appendToast: true,
+                            variant: 'danger'
                         });
+                        if (typeof failedCallback === "function") {
+                            failedCallback(err.response);
+                        }
+                    });
                 },
-                getContacts() {
-                    let the = this;
-                    return axios
-                        .post('{{route('Frontend.contacts.list')}}')
-                        .then(res => {
-                            // console.log(res.data)
-                            // this.$set(this, 'contacts', res.data);
-                            return res.data;
-                        })
-                        .catch(err => {
-                            console.log(err.response);
-                            // this.$set(this, 'contacts', []);
-                            return [];
-                        });
+                genericHandler(url, data, successCallback, failedCallback) {
+                    this.showMessages(axios.post(url, JSON.parse(JSON.stringify(data))), successCallback, failedCallback);
                 },
-                editContact(item) {
-                    this.$set(this, 'contact', JSON.parse(JSON.stringify(item)));
-                    this.$refs.contact_input.focus();
+                getGenericList(ctx) {
+                    return axios.post(ctx.apiUrl).then(function (res) {
+                        return res.data;
+                    }).catch(function (err) {
+                        console.log(err.response);
+                        return [];
+                    });
                 },
-                trashContact(id) {
+                genericTrash(url, successCallback, failedCallback) {
                     if (confirm('Are You Sure?')) {
-                        let the = this;
-                        axios.post('{{route('Frontend.contacts.trash','')}}/' + id)
-                            .then(res => {
-                                console.log(res)
-                                this.$refs.contact_list.refresh();
-                            })
-                            .catch(err => {
-                                console.log(err.response);
-                            });
+                        this.showMessages(axios.post(url), successCallback, failedCallback);
                     }
                 },
                 cancelAcademicInfoForm() {
@@ -177,109 +139,6 @@
                 initAcademicInfoForm() {
                     this.$set(this, 'academic_info', JSON.parse(JSON.stringify(academic_info)));
                     this.show_academic_form = true;
-                    this.$bvToast.toast('Ready to add new academic information', {
-                        title: 'READY',
-                        autoHideDelay: 5000,
-                        appendToast: true,
-                        variant: 'primary'
-                    });
-                },
-                academicInfoList(ctx) {
-                    return axios.post('{{route("Frontend.users.academic_info.index")}}')
-                        .then(res => {
-                            return res.data;
-                        })
-                        .catch(err => {
-                            console.log(err.response.data);
-                            return [];
-                        });
-                },
-                handleAcademicInfo() {
-                    let the = this;
-                    axios
-                        .post('{{route('Frontend.users.academic_info.store')}}', JSON.parse(JSON.stringify(the.academic_info)))
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                            the.cancelAcademicInfoForm();
-                            the.$refs.academic_info_table.refresh();
-                        })
-                        .catch(err => {
-                            console.log(err.response);
-                            the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
-                        });
-                },
-                deleteAcademicInfo(id) {
-                    if (!confirm('Are You Sure?')) {
-                        return false;
-                    }
-                    let the = this;
-                    axios
-                        .post('{{route('Frontend.users.academic_info.delete','')}}/' + id)
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                            the.$refs.academic_info_table.refresh();
-                        })
-                        .catch(err => {
-                            console.log(err.response);
-                            the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
-                        });
-                },
-                handleProfessionalInfo() {
-                    let the = this;
-                    axios
-                        .post('{{route('Frontend.users.professional_info.store')}}', JSON.parse(JSON.stringify(the.professional_info)))
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                            the.cancelProfessionalInfoForm();
-                            the.$refs.professional_info_table.refresh();
-                        })
-                        .catch(err => {
-                            console.log(err.response);
-                            the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
-                        });
-                },
-                professionalInfoList() {
-                    return axios.post('{{route('Frontend.users.professional_info.index')}}')
-                        .then(res => {
-                            return res.data;
-                        })
-                        .catch(err => {
-                            console.log(err.response.data);
-                            return [];
-                        });
                 },
                 initProfessionalInfoForm() {
                     this.$set(this, 'professional_info', JSON.parse(JSON.stringify(professional_info)));
@@ -289,36 +148,28 @@
                     this.$set(this, 'professional_info', JSON.parse(JSON.stringify(professional_info)));
                     this.show_professional_info_form = false
                 },
-                deleteProfessionalInfo(id) {
-                    if (!confirm('Are You Sure?')) {
-                        return false;
+                photoUpload(f, p, successCallback, failedCallback) {
+                    if (f) {
+                        let fd = new FormData();
+                        fd.append('the_file', f);
+                        fd.append('path', p || null);
+                        return axios
+                            .post('{{route('backend.file_upload')}}', fd)
+                            .then(function (res) {
+                                console.log(res.data);
+                                if (typeof successCallback === 'function') {
+                                    successCallback(res);
+                                }
+                                return res;
+                            })
+                            .catch(function (err) {
+                                console.log(err.response);
+                                if (typeof failedCallback === 'function') {
+                                    failedCallback(err.response);
+                                }
+                                return err.response;
+                            });
                     }
-                    let the = this;
-                    axios
-                        .post('{{route('Frontend.users.professional_info.delete','')}}/' + id)
-                        .then(res => {
-                            // console.log(res.data);
-                            the.$bvToast.toast(res.data.message || 'Successfully Done', {
-                                title: 'SUCCESS',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'primary'
-                            });
-                            the.$refs.professional_info_table.refresh();
-                        })
-                        .catch(err => {
-                            console.log(err.response);
-                            the.$bvToast.toast(err.response.data.message || 'Operation Failed', {
-                                title: 'FAILED',
-                                autoHideDelay: 5000,
-                                appendToast: true,
-                                variant: 'danger'
-                            });
-                        });
-                },
-                openProfileDialog() {
-                    this.$refs.profile_file.$el.click();
-                    console.log(this.$refs.profile_file)
                 },
                 processProfilePhoto(f) {
                     if (f) {

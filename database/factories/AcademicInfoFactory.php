@@ -22,7 +22,6 @@ class AcademicInfoFactory extends Factory
     public function definition()
     {
         return [
-            "user_id" => random_int(1, 5),
             "exam_name" => $this->faker->word,
             "board" => $this->faker->word,
             "institution" => $this->faker->word,

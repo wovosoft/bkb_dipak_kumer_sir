@@ -19,13 +19,6 @@ const Roles = () => import("../pages/roles/Index");
 // import Roles from "../pages/roles";
 
 
-const Branches = () => import("../pages/branches/Index");
-
-const DivisionalOffices = () => import("../pages/divisional_offices/Index");
-const CrmRmOffices = () => import("../pages/crm_rm_offices/Index");
-const LoanTypes = () => import("../pages/loan_types/Index");
-const LoanDetails = () => import("../pages/loan_details/Index");
-
 export default new VueRouter({
     mode: 'hash', // https://router.vuejs.org/api/#mode
     linkActiveClass: 'open active',
@@ -54,31 +47,6 @@ export default new VueRouter({
             //     disable_breadcrumb: true,
             //     title: _t('dashboard', 'Dashboard')
             // }
-        },
-        {
-            path: '/branches',
-            name: 'Branches',
-            component: Branches,
-        },
-        {
-            path: '/divisional_offices',
-            name: 'DivisionalOffices',
-            component: DivisionalOffices,
-        },
-        {
-            path: '/crm_rm_offices',
-            name: 'CrmRmOffices',
-            component: CrmRmOffices,
-        },
-        {
-            path: '/loan_types',
-            name: 'LoanTypes',
-            component: LoanTypes,
-        },
-        {
-            path: '/loan_details',
-            name: 'LoanDetails',
-            component: LoanDetails,
         },
     ]
 })

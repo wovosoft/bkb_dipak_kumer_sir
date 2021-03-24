@@ -22,7 +22,11 @@ class ProfessionalInfoFactory extends Factory
     public function definition()
     {
         return [
-            //
+            "title" => $this->faker->sentence(3),
+            "position" => $this->faker->jobTitle,
+            "institution" => $this->faker->company,
+            "starting_date" => $this->faker->date('Y-m-d'),
+            "description" => $this->faker->text
         ];
     }
 }
