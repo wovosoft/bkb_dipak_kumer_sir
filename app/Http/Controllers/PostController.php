@@ -9,6 +9,7 @@ class PostController extends Controller
 {
     public function index(Request $request)
     {
+//        if (auth()->user()->can('is_branch'))
         return view('blog', [
             "posts" => Post::query()
                 ->select(['*'])
